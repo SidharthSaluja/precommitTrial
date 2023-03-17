@@ -17,3 +17,12 @@ repos:
         language: system
         pass_filenames: false
         stages: [commit]
+        
+# Run command to exclude files from git index if modified outside allowed folders
+-   repo: local
+    hooks:
+    -   id: exclude-files-from-commit
+        name: Exclude files from commit
+        entry: sh excludeFiles.sh
+        language: system
+        stages: [commit]
