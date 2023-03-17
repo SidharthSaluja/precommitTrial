@@ -17,21 +17,28 @@ repos:
         language: system
         pass_filenames: false
         stages: [commit]
-
-# Run command to exclude files from git index if modified outside allowed folders
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    -   id: check-yaml
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+-   repo: https://github.com/psf/black
+    rev: 19.3b0
+    hooks:
+    -   id: black
+-   repo: local
+    hooks:
+    -   id: check-date-format
+        name: Check if the date in the qmd file is in proper format
+        entry: sh checkDate.sh
+        language: system
+        pass_filenames: false
+        stages: [commit]
 -   repo: local
     hooks:
     -   id: exclude-files-from-commit
         name: Exclude files from commit
-        entry: |
-          #!/bin/bash
-          
-          # Find modified files that are not in the allowed folders
-          modified_files=$(git status --porcelain | awk '{print $2}' | grep -vE "^about/|^posts/|^_freeze/")
-
-          if [ ! -z "$modified_files" ]; then
-            echo "Cannot commit files outside of 'about/', 'posts/', and '_freeze/' folders. Please move the modified files into one of these folders before committing."
-            exit 1
-          fi
+        entry: sh excludeFiles.sh
         language: system
         stages: [commit]
